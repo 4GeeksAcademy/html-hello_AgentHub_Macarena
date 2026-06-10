@@ -4,7 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AgentHub - Panel de Administracion</title>
+  <script>
+    window.tailwind = window.tailwind || {};
+    window.tailwind.config = {
+      darkMode: "class"
+    };
+    var tailwind = window.tailwind;
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .manual-dark body,
+    .manual-dark .bg-slate-100 {
+      background-color: rgb(2 6 23) !important;
+      color: rgb(241 245 249) !important;
+    }
+
+    .manual-dark .bg-white,
+    .manual-dark .bg-slate-50,
+    .manual-dark .bg-white\/95 {
+      background-color: rgb(15 23 42) !important;
+      color: rgb(241 245 249) !important;
+    }
+
+    .manual-dark .text-slate-900 {
+      color: rgb(241 245 249) !important;
+    }
+
+    .manual-dark .text-slate-500,
+    .manual-dark .text-slate-600,
+    .manual-dark .text-slate-700 {
+      color: rgb(148 163 184) !important;
+    }
+
+    .manual-dark .border-slate-200,
+    .manual-dark .border-slate-300 {
+      border-color: rgb(51 65 85) !important;
+    }
+  </style>
 </head>
 <body class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
   <div class="min-h-screen flex">
@@ -663,19 +699,38 @@
       }
     };
 
+    function safeGetTheme() {
+      try {
+        return localStorage.getItem("agenthub-theme");
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function safeSetTheme(value) {
+      try {
+        localStorage.setItem("agenthub-theme", value);
+      } catch (error) {
+        // En entornos con storage bloqueado, el tema igual funciona en memoria.
+      }
+    }
+
     function applyTheme() {
-      const savedTheme = localStorage.getItem("agenthub-theme");
+      const savedTheme = safeGetTheme();
       if (savedTheme === "dark") {
         root.classList.add("dark");
+        root.classList.add("manual-dark");
       } else {
         root.classList.remove("dark");
+        root.classList.remove("manual-dark");
       }
       darkModeBtn.textContent = root.classList.contains("dark") ? "Modo claro" : "Modo oscuro";
     }
 
     function toggleTheme() {
       root.classList.toggle("dark");
-      localStorage.setItem("agenthub-theme", root.classList.contains("dark") ? "dark" : "light");
+      root.classList.toggle("manual-dark");
+      safeSetTheme(root.classList.contains("dark") ? "dark" : "light");
       applyTheme();
     }
 
